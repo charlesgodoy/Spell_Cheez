@@ -20,7 +20,7 @@ public class SplashActivity extends AppCompatActivity {
                 startActivity(new Intent(SplashActivity.this, MainMenu.class));
                 finish();
             }
-        }, 5000);
+        }, 3000);
     }
 
     @Override

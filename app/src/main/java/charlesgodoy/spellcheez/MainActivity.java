@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -59,8 +61,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startSpellCheez() {
+        resetButtonColors();
         setQuestionAndChoices();
         setChoicesActions();
+    }
+
+    private void resetButtonColors() {
+        cvOne.setBackgroundColor(getResources().getColor(R.color.purple_500));
+        tvOne.setBackgroundColor(getResources().getColor(R.color.purple_500));
+
+        cvTwo.setBackgroundColor(getResources().getColor(R.color.purple_500));
+        tvTwo.setBackgroundColor(getResources().getColor(R.color.purple_500));
+
+        cvThree.setBackgroundColor(getResources().getColor(R.color.purple_500));
+        tvThree.setBackgroundColor(getResources().getColor(R.color.purple_500));
+
+        cvFour.setBackgroundColor(getResources().getColor(R.color.purple_500));
+        tvFour.setBackgroundColor(getResources().getColor(R.color.purple_500));
     }
 
     private void setQuestionAndChoices() {
@@ -68,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         QuestionModel question = list.get(currentQuestionPosition);
         iv_question.setImageResource(question.getImage());
         iv_question.setTag(question.getCorrectAnswer());
+        Log.d("caz", "setQuestionAndChoices: setTag = " + iv_question.getTag());
 
         tvOne.setText(question.getChoiceOne());
         tvTwo.setText(question.getChoiceTwo());
@@ -109,12 +127,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void validateAnswer(String answer, String correctAnswer) {
+
+        Log.d("caz", "validateAnswer method has been called");
+        Log.d("caz", "user chose: " + answer);
+        Log.d("caz", "correct answer is: " + correctAnswer);
+
+        Log.d("caz", "currentQuestionPosition = " + currentQuestionPosition);
+        Log.d("caz", "list.size() - 1 = " + (list.size() - 1));
+
         if (currentQuestionPosition == (list.size() - 1)) {
+
+            Log.d("caz", "checking current question position to see if it equals list.size() -1");
+
             if (answer.equals(correctAnswer)) {
+
+                Log.d("caz", "comparing user answer to correct answer");
+
                 showMessage("Correct Answer");
                 mScore += mPoint;
+                highlightCorrect(correctAnswer);
                 updateScore();
             } else {
+
+                Log.d("caz", "user DID NOT choose correct answer");
+                highlightCorrect(correctAnswer);
+                highlightError(answer);
                 showMessage("Wrong Answer");
             }
 
@@ -125,16 +162,68 @@ public class MainActivity extends AppCompatActivity {
             boolean isPerfect = mScore == perfectScore;
             goToResultActivity(isPerfect);
         } else {
+
+            Log.d("caz", "ENTERING ELSE - checking current question position to see if it equals list.size() -1");
+
             if (answer.equals(correctAnswer)) {
+
+                Log.d("caz", "ELSE IF - user selected right answer ");
+
                 showMessage("Correct Answer");
                 mScore += mPoint;
+                highlightCorrect(correctAnswer);
                 updateScore();
             } else {
+
+                Log.d("caz", "ELSE - user selected wrong answer ");
+                highlightCorrect(correctAnswer);
+                highlightError(answer);
                 showMessage("Wrong Answer");
             }
             currentQuestionPosition++;
-            new Handler(Looper.getMainLooper()).postDelayed(this::startSpellCheez, 2000);
+            new Handler(Looper.getMainLooper()).postDelayed(this::startSpellCheez, 1500);
         }
+    }
+
+    private void highlightError(String answer) {
+        Log.d("caz", "entering highlightError method");
+        if (tvOne.getText().toString() == answer) {
+            cvOne.setBackgroundColor(getResources().getColor(R.color.red));
+            tvOne.setBackgroundColor(getResources().getColor(R.color.red));
+        }
+        if (tvTwo.getText().toString() == answer) {
+            cvTwo.setBackgroundColor(getResources().getColor(R.color.red));
+            tvTwo.setBackgroundColor(getResources().getColor(R.color.red));
+        }
+        if (tvThree.getText().toString() == answer) {
+            cvThree.setBackgroundColor(getResources().getColor(R.color.red));
+            tvThree.setBackgroundColor(getResources().getColor(R.color.red));
+        }
+        if (tvFour.getText().toString() == answer) {
+            cvFour.setBackgroundColor(getResources().getColor(R.color.red));
+            tvFour.setBackgroundColor(getResources().getColor(R.color.red));
+        }
+    }
+
+    private void highlightCorrect(String correctAnswer) {
+        Log.d("caz", "entering highlightCorrect method");
+        if (tvOne.getText().toString() == correctAnswer) {
+            cvOne.setBackgroundColor(getResources().getColor(R.color.green));
+            tvOne.setBackgroundColor(getResources().getColor(R.color.green));
+        }
+        if (tvTwo.getText().toString() == correctAnswer) {
+            cvTwo.setBackgroundColor(getResources().getColor(R.color.green));
+            tvTwo.setBackgroundColor(getResources().getColor(R.color.green));
+        }
+        if (tvThree.getText().toString() == correctAnswer) {
+            cvThree.setBackgroundColor(getResources().getColor(R.color.green));
+            tvThree.setBackgroundColor(getResources().getColor(R.color.green));
+        }
+        if (tvFour.getText().toString() == correctAnswer) {
+            cvFour.setBackgroundColor(getResources().getColor(R.color.green));
+            tvFour.setBackgroundColor(getResources().getColor(R.color.green));
+        }
+
     }
 
     private void goToResultActivity(boolean isPerfect) {
@@ -166,7 +255,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showMessage(String message) {
-        Snackbar.make(cl_root, message, Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(cl_root, message, Snackbar.LENGTH_INDEFINITE).setDuration(1500).show();
     }
 
     private void initViews() {
